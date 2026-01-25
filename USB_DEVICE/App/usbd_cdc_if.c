@@ -21,6 +21,7 @@
 uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
+/* ВАЖНО: Объявляем внешнюю переменную */
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static int8_t CDC_Init_FS(void);
@@ -42,37 +43,29 @@ USBD_CDC_ItfTypeDef USBD_Interface_fops_FS =
 
 static int8_t CDC_Init_FS(void)
 {
-  /* USER CODE BEGIN 3 */
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
 
-  CLI_Init();   // <<< ВАЖНО: инициализация CLI
+  CLI_Init();   // Инициализация CLI
 
   return (USBD_OK);
-  /* USER CODE END 3 */
 }
 
 static int8_t CDC_DeInit_FS(void)
 {
-  /* USER CODE BEGIN 4 */
   return (USBD_OK);
-  /* USER CODE END 4 */
 }
 
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
-  /* USER CODE BEGIN 5 */
   UNUSED(cmd);
   UNUSED(pbuf);
   UNUSED(length);
   return (USBD_OK);
-  /* USER CODE END 5 */
 }
 
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
-  /* USER CODE BEGIN 6 */
-
   /* Передаём каждый принятый байт в CLI */
   for (uint32_t i = 0; i < *Len; i++)
   {
@@ -84,14 +77,12 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 
   return (USBD_OK);
-  /* USER CODE END 6 */
 }
 
 uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 {
   uint8_t result = USBD_OK;
 
-  /* USER CODE BEGIN 7 */
   USBD_CDC_HandleTypeDef *hcdc =
       (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
 
@@ -100,17 +91,14 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
   result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
-  /* USER CODE END 7 */
 
   return result;
 }
 
 static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 {
-  /* USER CODE BEGIN 13 */
   UNUSED(Buf);
   UNUSED(Len);
   UNUSED(epnum);
   return USBD_OK;
-  /* USER CODE END 13 */
 }

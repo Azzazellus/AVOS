@@ -11,7 +11,6 @@
 #define TOGGLE_0_5HZ_MS 1000U
 #define TOGGLE_1HZ_MS    500U
 #define TOGGLE_3HZ_MS    166U
-
 #define ACTIVITY_TIMEOUT_MS 300U
 
 static VCP_State_t vcp_state = VCP_DISCONNECTED;
@@ -33,6 +32,7 @@ void StatusLED_Init(void)
 {
     GPIO_InitTypeDef gpio = {0};
 
+    /* КРИТИЧЕСКИ ВАЖНО: Включаем тактирование порта C! */
     __HAL_RCC_GPIOC_CLK_ENABLE();
 
     gpio.Pin   = STATUS_LED_PIN;
@@ -41,6 +41,15 @@ void StatusLED_Init(void)
     gpio.Speed = GPIO_SPEED_FREQ_LOW;
 
     HAL_GPIO_Init(STATUS_LED_PORT, &gpio);
+
+    /* Тестовое мигание при инициализации */
+    for(int i = 0; i < 3; i++) {
+        HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_RESET);
+        HAL_Delay(100);
+        HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_SET);
+        HAL_Delay(100);
+    }
+
     HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_RESET);
 
     vcp_state = VCP_DISCONNECTED;
