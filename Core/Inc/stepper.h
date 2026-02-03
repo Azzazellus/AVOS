@@ -4,6 +4,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ===== INIT ===== */
 void Stepper_Init(void);
 void Stepper_Task(void);
@@ -24,28 +28,59 @@ void Stepper_SetAccelX_deg_s2(float accel_deg_s2);
 float Stepper_GetAccelZ_mm_s2(void);
 float Stepper_GetAccelX_deg_s2(void);
 
-/* ===== JERK ===== */
-void Stepper_SetJerkZ_mm_s3(float jerk_mm_s3);
-void Stepper_SetJerkX_deg_s3(float jerk_deg_s3);
-float Stepper_GetJerkZ_mm_s3(void);
-float Stepper_GetJerkX_deg_s3(void);
-
 /* ===== POSITION ===== */
 float Stepper_GetPosZ_mm(void);
 float Stepper_GetPosX_deg(void);
+int32_t Stepper_GetStepsZ(void);
+int32_t Stepper_GetStepsX(void);
+
+/* ===== MANUAL POSITION SET ===== */
+void Stepper_SetPositionZ_mm(float z_mm);
+void Stepper_SetPositionX_deg(float x_deg);
 
 /* ===== STATUS ===== */
 bool Stepper_IsBusyZ(void);
 bool Stepper_IsBusyX(void);
+bool Stepper_IsAnyBusy(void);
 bool Stepper_IsHoming(void);
 
 /* ===== HOME ===== */
-void Stepper_StartHomeZ(void);
+void Stepper_StartHoming(void);
+
+/* ===== DIRECTION CONTROL ===== */
+void Stepper_SetDirZ(uint8_t dir);
+void Stepper_SetDirX(uint8_t dir);
 
 /* ===== EMERGENCY ===== */
 void Stepper_EmergencyStop(void);
 
 /* ===== ISR ===== */
 void Stepper_TIM_ISR(void);
+
+/* ===== DEBUG ===== */
+#ifdef STEPPER_DEBUG
+void Stepper_DebugPrintState(void);
+void Stepper_DebugPrintTargets(void);
+#endif
+
+/* ===== EXTERN VARIABLES FOR ISR (опционально, только если нужны извне) ===== */
+#ifdef STEPPER_EXTERN_VARS
+extern volatile bool z_busy;
+extern volatile bool x_busy;
+extern volatile bool homing_z;
+extern volatile int32_t cur_z_steps;
+extern volatile int32_t cur_x_steps;
+extern volatile int32_t tgt_z_steps;
+extern volatile int32_t tgt_x_steps;
+
+extern static float z_current_speed;
+extern static float x_current_speed;
+extern static uint32_t z_pulse_interval;
+extern static uint32_t x_pulse_interval;
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STEPPER_H */

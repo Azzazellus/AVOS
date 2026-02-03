@@ -7,7 +7,6 @@
 #include "stm32f4xx_hal.h"
 #include <string.h>
 
-/* ВАЖНО: Объявляем внешнюю переменную из usb_device.c */
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static uint32_t last_activity_ms  = 0;
@@ -17,13 +16,11 @@ void VCP_Init(void)
 {
     last_activity_ms  = 0;
     last_heartbeat_ms = 0;
-
     StatusLED_SetVCPState(VCP_DISCONNECTED);
 }
 
 bool VCP_IsConnected(void)
 {
-    /* Проверяем состояние USB */
     return (hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED);
 }
 

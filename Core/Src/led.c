@@ -2,14 +2,6 @@
 #include "tim.h"
 #include "stm32f4xx_hal.h"
 
-/*
-LED_R  -> TIM2 CH1 (PA5)
-LED_G  -> TIM2 CH3 (PA2)
-LED_B  -> TIM2 CH4 (PA3)
-LED_UV -> TIM1 CH3 (PA10)
-LED_IR -> TIM1 CH1 (PA8)
-*/
-
 static uint8_t r = 0, g = 0, b = 0, uv = 0, ir = 0;
 static bool led_enabled = true;
 

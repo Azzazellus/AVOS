@@ -32,8 +32,8 @@ void StatusLED_Init(void)
 {
     GPIO_InitTypeDef gpio = {0};
 
-    /* КРИТИЧЕСКИ ВАЖНО: Включаем тактирование порта C! */
-    __HAL_RCC_GPIOC_CLK_ENABLE();
+    /* Тактирование порта C уже должно быть включено в MX_GPIO_Init */
+    /* __HAL_RCC_GPIOC_CLK_ENABLE(); */ // Убрано - уже включено в MX_GPIO_Init
 
     gpio.Pin   = STATUS_LED_PIN;
     gpio.Mode  = GPIO_MODE_OUTPUT_PP;
@@ -42,15 +42,8 @@ void StatusLED_Init(void)
 
     HAL_GPIO_Init(STATUS_LED_PORT, &gpio);
 
-    /* Тестовое мигание при инициализации */
-    for(int i = 0; i < 3; i++) {
-        HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_RESET);
-        HAL_Delay(100);
-        HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_SET);
-        HAL_Delay(100);
-    }
-
-    HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_RESET);
+    /* Гарантируем выключенное состояние */
+    HAL_GPIO_WritePin(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_SET);
 
     vcp_state = VCP_DISCONNECTED;
     last_toggle_ms = HAL_GetTick();

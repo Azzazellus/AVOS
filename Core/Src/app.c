@@ -1,6 +1,4 @@
 #include "app.h"
-
-#include "encoder.h"
 #include "stepper.h"
 #include "status_led.h"
 #include "cli.h"
@@ -8,41 +6,21 @@
 
 void App_Init(void)
 {
-    Encoder_Init();
-    Stepper_Init();
-    CLI_Init();
-    VCP_Init();
-    StatusLED_Init();
+    // Инициализация в правильном порядке
+    StatusLED_Init();     // Сначала светодиод статуса
+    Stepper_Init();       // Затем шаговые двигатели
+    CLI_Init();           // Командный интерфейс
+    VCP_Init();           // USB VCP
 
-    Stepper_StartHomeZ();
+    // Всегда запускаем homing после инициализации
+    Stepper_StartHoming();
 }
 
 void App_Loop(void)
 {
-    Encoder_Task();
-    Stepper_Task();
-    CLI_Task();
-    VCP_Task();
-    StatusLED_Task();
-
-    /* ===== JOG ===== */
-    if (!Stepper_IsHoming())
-    {
-        int32_t d = Encoder_GetJogDelta();
-        if (d != 0)
-        {
-            Encoder_ResetJog();
-
-            if (Encoder_GetAxis() == AXIS_Z)
-            {
-                float z = Stepper_GetPosZ_mm();
-                Stepper_SetTargetZ_mm(z + d);
-            }
-            else
-            {
-                float x = Stepper_GetPosX_deg();
-                Stepper_SetTargetX_deg(x + d);
-            }
-        }
-    }
+    // Основной цикл обработки задач
+    Stepper_Task();       // Управление шаговыми двигателями
+    CLI_Task();           // Обработка команд
+    VCP_Task();           // USB VCP мониторинг
+    StatusLED_Task();     // Светодиод статуса
 }

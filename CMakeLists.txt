@@ -42,8 +42,6 @@ add_executable(${CMAKE_PROJECT_NAME}
         Core/Src/stepper.c
         Core/Inc/status_led.h
         Core/Src/status_led.c
-        Core/Inc/encoder.h
-        Core/Src/encoder.c
         Core/Inc/app.h
         Core/Src/app.c
         Core/Inc/cli.h
